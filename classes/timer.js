@@ -5,16 +5,17 @@ const Timer = (function createTimer(){
   return class Timer {
     constructor(clue){
       this.clue = clue
-      this.seconds = 10
+      this.seconds = 11
       this.goTimer = setInterval(function(){this.run()}.bind(this), 1000)
     }
 
 
     run(){
       this.seconds-- 
-      if(this.seconds <= 0) {
+      if(this.seconds < 0) {
         this.stop()
         this.ranOutOfTime()
+        checkEndGame()
         backToGame()
       } else {
         presentTime.html(this.seconds)

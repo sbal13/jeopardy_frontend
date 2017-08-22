@@ -4,15 +4,60 @@
 	<title>Flatiron Jeopardy</title>
 </head>
 <body>
+	<style>
+		.clue{
+			height: 50px;
+			text-align: center;
+			background: rgb(0,0,165);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 5px;
+			color: rgb(233,162,123);
+
+		}
+
+		h4 {
+			text-align: center;
+			background: rgb(0,0,165);
+/*			font-family: 'OPTIKorinna-Agency';
+*/		}
+
+		.category{
+			min-height: 75px;
+			background: rgb(0,0,165);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 5px;
+			color: white;
+		}
+
+		#game-board{
+			background-color: black;
+		}
+
+
+/*		@font-face {
+		    font-family: 'OPTIKorinna-Agency';
+		    src:url('./fonts/OPTIKorinna-Agency.ttf.woff') format('woff'),
+		        url('./fonts/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
+		        url('./fonts/OPTIKorinna-Agency.ttf.eot'),
+		        url('./fonts/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype'); 
+		    font-weight: normal;
+		    font-style: normal;
+		}*/
+
+
+	</style>
 
 	<div id="game-screen" class="container">
-		 <div><span id="timer"></span></div>
-		<div id="user-display">
-		</div>
-		<div id="game-board" class="container">
-		</div>
-		<div id="clue-display" class="container">
-		</div>
+		<div id="welcome"></div>
+		<div><span id="timer"></span></div>
+		<div id="user-display"></div>
+		<div id="game-board" class="container"></div>
+		<div id="clue-display" class="container"></div>
+		<div id="daily-double" class="container"></div>
 	</div>	
 	<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
 	<script type="text/javascript" src="./classes/timer.js"></script>

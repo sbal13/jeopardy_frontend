@@ -9,6 +9,7 @@ const Clue = (function createClue(){
 			this.answer = answer
 			this.category_id = category_id
 			this.value = value
+			this.dd = false
 			this.shown = true
 
 			all.push(this)
@@ -16,7 +17,11 @@ const Clue = (function createClue(){
 
 		
 
-
+		static makeDD(){
+			var randClue = this.all()[Math.floor(Math.random() * this.all().length)];
+			randClue.dd = true
+			console.log(randClue)
+		}
 
 		static all(){
 			return all
