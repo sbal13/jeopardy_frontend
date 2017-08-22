@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function(){
 const screen = $('#game-screen')
 const board = $('#game-board')
 const clueDisplay = $("#clue-display")
+const userDisplay = $("#user-display")
+var currentUser;
 
 function loadScreen(){
 	board.html('<h2 id="welcome-message"> Click here to start! </h2>')
@@ -24,25 +26,17 @@ function promptUsername(){
 	$('#user-form').on('submit', function(event){
 		event.preventDefault()
 		const userName = $('#username').val()
+		currentUser = new User(userName)
 		board.html(`<h2> Welcome ${userName} </h2>`)
+		userDisplay.html(`${currentUser.name}: $${currentUser.score}`)
 		setCategories()
 	})
-	// setCategories()
-	
 }
 
 
 
 function setCategories(){
-	// const mm = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-	// const yy = ["2010", "2011", "2012", "2013", "2014"]
-
-	// const randMonth = mm[Math.floor(Math.random() * mm.length)];
-	// const randYear = yy[Math.floor(Math.random() * yy.length)];
-	// const url = `http://jservice.io/api/clues?min_date=${randYear}-${randMonth}-08T12:00:00.000Z&max_date=${randYear}-${randMonth}-08T12:00:00.000Z`
-
-	// fetch(url).then(resp => resp.json()).then(json => console.log(json))
-
+	
 	fetch("http://localhost:3000/api/v1/categories")
 	.then(res=> res.json())
 	.then(res => renderCategories(res))
@@ -80,63 +74,50 @@ function renderCategories(json){
 
 	board.on("click", "div.clue", function(e) {
 		e.stopImmediatePropagation()
-
-		// if (e.target === "clues") {
 			
-			const targetId = parseInt(this.id.split("-")[1])
+		const targetId = parseInt(this.id.split("-")[1])
 
-			const targetClue = Clue.all().find(clue => clue.id === targetId)
-			
-			board.hide()
+		const targetClue = Clue.all().find(clue => clue.id === targetId)
+		
+		board.hide()
 
-			const responseHTML = `
-				<p>${targetClue.question}</p>
-				<form id="answer-form">
-					<input type="text" id="answer">
-				</form>
-			`
+		const responseHTML = `
+			<p>${targetClue.question}</p>
+			<form id="answer-form">
+				<input type="text" id="answer">
+			</form>
+		`
+		var newTimer = new Timer(targetClue)
 
-			clueDisplay.html(responseHTML)
+		clueDisplay.html(responseHTML)
 
-			$('#answer-form').on("submit", function(e){
-				e.preventDefault()
-				if (targetClue.answer.toLowerCase().includes($('#answer').val().toLowerCase())) {
-					alert('Correct!')
-				} else {
-					alert('Incorrect!')
-				}
+		$('#answer-form').on("submit", function(e){
+			e.preventDefault()
 
-				targetClue.shown = false
+			if (targetClue.answer.toLowerCase().includes($('#answer').val().toLowerCase()) && newTimer.seconds > 0) {
+				currentUser.score += targetClue.value
+				alert(`Correct! You now have $${currentUser.score}`)
+			} else {
+				currentUser.score -= targetClue.value
+				alert(`Incorrect! The correct answer was ${targetClue.answer}. You are now at $${currentUser.score}`)
+			}
 
+			backToGame()
 
-				clueDisplay.html("")
-				board.show()
-			})
-		// }
+			newTimer.stop()
 
-
-	// if(board.css("display") === 'block') {
-	// 	board.hide()
-	// 	console.log("I was when showing!")
-	// } else {
-	// 	board.show()
-	// 	console.log("I was when hiding!")
-
-	// }
-})
-
-
+		})
+		console.log(this)
+		this.innerHTML= ""
+		
+	})
 
 }
 
-// document.addEventListener("click", function(e) {
-// 	console.log("I was clicked!")
-// 	if(board.css("display") === 'block') {
-// 		board.hide()
-// 		console.log("I was when showing!")
-// 	} else {
-// 		board.show()
-// 		console.log("I was when hiding!")
 
-// 	}
-// })
+
+function backToGame(){
+	userDisplay.html(`${currentUser.name}: $${currentUser.score}`)
+	clueDisplay.html("")
+	board.show()
+}
