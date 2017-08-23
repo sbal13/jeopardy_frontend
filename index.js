@@ -161,7 +161,10 @@ function guess(responseHTML, targetClue){
 		$('#answer-form').on("submit", function(e){
 			e.preventDefault()
 
-			if (targetClue.answer.toLowerCase().includes($('#answer').val().toLowerCase()) && newTimer.seconds > 0) {
+			let sanitizedInput = $('#answer').val().toLowerCase().trim()
+			let regex = sanitizedInput
+
+			if (sanitizedInput && targetClue.answer.toLowerCase().includes(sanitizedInput)) {
 				currentUser.score += targetClue.value
 				alert(`Correct! You now have $${currentUser.score}`)
 			} else {
