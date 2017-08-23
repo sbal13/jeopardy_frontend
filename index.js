@@ -98,6 +98,8 @@ function renderCategories(json){
 			const questionHTML = `<h2>${targetClue.question.toUpperCase()}</h2>`
 			const responseHTML = `
 				<h2>${targetClue.category.title.toUpperCase()}</h2>
+				<br>
+				<br>
 				<form id="answer-form">
 					<p>What is 
 					<input type="text" id="answer" class="input-large">
@@ -125,7 +127,7 @@ function renderCategories(json){
 
 					const wagerValue = parseInt($('#wager').val())
 					
-					if(wagerValue > maxWager() || wagerValue < 5) {
+					if(!wagerValue || wagerValue > maxWager() || wagerValue < 5) {
 						alert("Please enter a valid wager.")
 					} else {
 						timerDisplay.show()
