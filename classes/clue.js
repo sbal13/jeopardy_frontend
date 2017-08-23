@@ -11,8 +11,14 @@ const Clue = (function createClue(){
 			this.value = value
 			this.dd = false
 			this.shown = true
+			this.findCategory()
 
 			all.push(this)
+		}
+
+		findCategory(){
+			this.category = Category.all().find(cat => cat.id === this.category_id)
+			console.log(this.category)
 		}
 
 		

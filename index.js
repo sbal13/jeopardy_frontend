@@ -5,11 +5,18 @@ document.addEventListener('DOMContentLoaded', function(){
 const screen = $('#game-screen')
 const welcome = $('#welcome')
 const board = $('#game-board')
+
 const clueDisplay = $("#clue-display")
+const questionDisplay = $("#question")
+const rhs = $("#rhs")
+const inputDisplay = $("#input")
+const timerDisplay = $("#timer-div")
+
 const userDisplay = $("#user-display")
 var currentUser;
 
 function loadScreen(){
+	clueDisplay.hide()
 	welcome.html('<h2 id="welcome-message"> Click here to start! </h2>')
 	$('#welcome-message').on('click',function() {
 		promptUsername()
@@ -28,9 +35,9 @@ function promptUsername(){
 		event.preventDefault()
 		const userName = $('#username').val()
 		currentUser = new User(userName)
-		welcome.html(`<h2> Welcome ${userName} </h2>`)
-		userDisplay.html(`${currentUser.name}: $${currentUser.score}`)
+		userDisplay.html(`${currentUser.name.toUpperCase()}: $${currentUser.score}`)
 		welcome.html("")
+		welcome.hide()
 		setCategories()
 	})
 }
@@ -61,8 +68,6 @@ function renderCategories(json){
 			`
 		}).join("")
 
-
-
 		return `<div class="col-md-2">
 			<div class="category"><h4>${object["category"].title.toUpperCase()}</h4></div>
 			<div id="clues" class="">
@@ -75,88 +80,81 @@ function renderCategories(json){
 
 	Clue.makeDD()
 
+	//Console logs all the clues
 	console.log(json)
 
 	board.html(categoryHTML)
 
 	board.on("click", "div.clue", function(e) {
 		e.stopImmediatePropagation()
-			
 		const targetId = parseInt(this.id.split("-")[1])
-
 		const targetClue = Clue.all().find(clue => clue.id === targetId)
-		
-		board.hide()
 
-		const responseHTML = `
-			<p>${targetClue.question}</p>
-			<form id="answer-form">
-				<input type="text" id="answer">
-			</form>
-		`
-		
+		if(targetClue.shown) {
 
+			clueDisplay.show()
+			board.hide()
 
-
-
-		if (targetClue.dd===true) {
-			const ddHTML = `
-				<p>You have selected a Daily Double! Please make a wager between $5 and $${maxWager()}</p>
-				<form id="wager-form">
-					<input type="number" id="wager">
+			const questionHTML = `<h2>${targetClue.question.toUpperCase()}</h2>`
+			const responseHTML = `
+				<h2>${targetClue.category.title.toUpperCase()}</h2>
+				<form id="answer-form">
+					<p>What is 
+					<input type="text" id="answer" class="input-large">
+					 ?</p>
 				</form>
 			`
-			clueDisplay.html(ddHTML)
 
-			$('#wager-form').on("submit", function(e){
-				e.preventDefault()
-				targetClue.value = parseInt($('#wager').val())
-				$('#daily-double').html(`<p>You have wagered: $${targetClue.value}</p>`)
-				guess(responseHTML,targetClue)
+			if (targetClue.dd===true) {
 
-				// clueDisplay.html(responseHTML)
+				timerDisplay.hide()
+				const ddHTML = `
+					<p>You have selected a Daily Double! Please make a wager between $5 and $${maxWager()}</p>
+					<form id="wager-form">
+						<input type="number" id="wager">
+					</form>
+				`
+				const ddImage = `url(./images/dd.png)`
+				// we are clearing previous question from display
+				questionDisplay.html("")
+				questionDisplay.css('background-image', ddImage)
+				inputDisplay.html(ddHTML)
 
-			})
+				$('#wager-form').on("submit", function(e){
+					e.preventDefault()
 
-		} else {
-			guess(responseHTML,targetClue)
-			// clueDisplay.html(responseHTML)
+					const wagerValue = parseInt($('#wager').val())
+					
+					if(wagerValue > maxWager() || wagerValue < 5) {
+						alert("Please enter a valid wager.")
+					} else {
+						timerDisplay.show()
+						// we are resetting background image to nothing
+						questionDisplay.css('background-image', "")
+						targetClue.value = wagerValue
+						$('#daily-double').html(`<p>You have wagered: $${targetClue.value}</p>`)
+						guess(questionHTML, responseHTML,targetClue)
+					}
+
+				})
+
+			} else {
+				guess(questionHTML, responseHTML,targetClue)
+			}
+			console.log(this)
+			targetClue.shown = false 
+
+			//This hides the value after question answered
+			this.innerHTML = ""
 		}
-
-
-		
-
-
-
-		// $('#answer-form').on("submit", function(e){
-		// 	e.preventDefault()
-
-		// 	if (targetClue.answer.toLowerCase().includes($('#answer').val().toLowerCase()) && newTimer.seconds > 0) {
-		// 		currentUser.score += targetClue.value
-		// 		alert(`Correct! You now have $${currentUser.score}`)
-		// 	} else {
-		// 		currentUser.score -= targetClue.value
-		// 		alert(`Incorrect! The correct answer was ${targetClue.answer}. You are now at $${currentUser.score}`)
-		// 	}
-		// 	checkEndGame()
-		// 	backToGame()
-
-		// 	newTimer.stop()
-
-		// })
-		console.log(this)
-		targetClue.shown = false 
-		this.innerHTML= ""
-		
-		
 	})
-
 }
 
-function guess(responseHTML, targetClue){
+function guess(questionHTML, responseHTML, targetClue){
 
 		var newTimer = new Timer(targetClue)
-		clueDisplay.html(responseHTML)
+		questionDisplay.html(questionHTML)
+		inputDisplay.html(responseHTML)
 
 		$('#answer-form').on("submit", function(e){
 			e.preventDefault()
@@ -166,10 +164,10 @@ function guess(responseHTML, targetClue){
 
 			if (sanitizedInput && targetClue.answer.toLowerCase().includes(sanitizedInput)) {
 				currentUser.score += targetClue.value
-				alert(`Correct! You now have $${currentUser.score}`)
+				alert(`Correct! You now have ${scoreNormalizer()}`)
 			} else {
 				currentUser.score -= targetClue.value
-				alert(`Incorrect! The correct answer was ${targetClue.answer}. You are now at $${currentUser.score}`)
+				alert(`Incorrect! The correct answer was "${targetClue.answer}." \nYou are now at ${scoreNormalizer()}`)
 			}
 			checkEndGame()
 			backToGame()
@@ -182,11 +180,19 @@ function guess(responseHTML, targetClue){
 
 
 function backToGame(){
-	userDisplay.html(`${currentUser.name}: $${currentUser.score}`)
-	clueDisplay.html("")
+	userDisplay.html(`${currentUser.name.toUpperCase()}: ${scoreNormalizer()}`)
+	clueDisplay.hide()
 	$('#daily-double').html("")
 	board.show()
 
+}
+
+function scoreNormalizer(){
+	if (currentUser.score < 0){
+		return `-$${-currentUser.score}`
+	} else {
+		return `$${currentUser.score}`
+	}
 }
 
 function maxWager(){

@@ -24,7 +24,7 @@ const Timer = (function createTimer(){
 
     ranOutOfTime(){
         currentUser.score -= this.clue.value
-        alert(`Time's up! The correct answer was ${this.clue.answer}. You are now at $${currentUser.score}`)
+        alert(`Time's up! The correct answer was "${this.clue.answer}." \nYou are now at ${scoreNormalizer()}`)
     }
     
     stop(){

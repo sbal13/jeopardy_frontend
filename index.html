@@ -4,7 +4,12 @@
 	<title>Flatiron Jeopardy</title>
 </head>
 <body>
+	<link href="https://fonts.googleapis.com/css?family=Tinos" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
 	<style>
+
+		
+
 		.clue{
 			height: 50px;
 			text-align: center;
@@ -17,14 +22,20 @@
 
 		}
 
+		div.col-md-2{
+			padding-left: 0px;
+			padding-right: 0px;
+		}
+
 		h4 {
 			text-align: center;
 			background: rgb(0,0,165);
+			font-size: .8em;
 /*			font-family: 'OPTIKorinna-Agency';
 */		}
 
 		.category{
-			min-height: 75px;
+			min-height: 77px;
 			background: rgb(0,0,165);
 			display: flex;
 			align-items: center;
@@ -37,27 +48,89 @@
 			background-color: black;
 		}
 
+		#question{
+			background: rgb(0,0,165);
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			color: white;
+			display: flex;
+			height: 95%;
+			font-family: 'Tinos', serif;
+			background-size: 100%;
+		}
 
-/*		@font-face {
-		    font-family: 'OPTIKorinna-Agency';
-		    src:url('./fonts/OPTIKorinna-Agency.ttf.woff') format('woff'),
-		        url('./fonts/OPTIKorinna-Agency.ttf.svg#OPTIKorinna-Agency') format('svg'),
-		        url('./fonts/OPTIKorinna-Agency.ttf.eot'),
-		        url('./fonts/OPTIKorinna-Agency.ttf.eot?#iefix') format('embedded-opentype'); 
-		    font-weight: normal;
-		    font-style: normal;
-		}*/
+		#clue-display{
+			height: 300px;
+			display: flex;
+			align-items: center;
+		}
+
+		#rhs{
+			justify-content: center;
+			align-items: center;
+			align-content: center;
+			text-align: center;
+		}
+
+		#welcome{
+			background-image: url(./images/jeopardy_title.jpg);
+			height: 500px;
+			background-size: 100%;
+			display: flex;
+			justify-content: center;
+			color: white;
+		}
+
+		#username{
+			margin-top: 70px;
+			color: black;
+		}
+
+		#welcome-message{
+			padding-top: 50px;
+		}
+
+
+		div.well{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: rgb(0,0,165) ;
+			color: rgb(233,162,123);
+			font-size: 2em;
+			min-height: 87.5px;
+			max-width: 80px;
+			float: unset;
+			margin: auto;
+		}
+
+		#user-display{
+			text-align: center;
+			font-size: 2em;
+			height: 80px;
+			margin-top: 20px;
+			font-family: 'Permanent Marker', cursive;
+		}
+
 
 
 	</style>
 
 	<div id="game-screen" class="container">
 		<div id="welcome"></div>
-		<div><span id="timer"></span></div>
 		<div id="user-display"></div>
 		<div id="game-board" class="container"></div>
-		<div id="clue-display" class="container"></div>
-		<div id="daily-double" class="container"></div>
+		<div id="clue-display" class="container col-md-12">
+			<div id="question" class="col-md-6"> </div>
+			<div id="rhs" class="col-md-6">
+				<div id="input" class="col-md-12"> </div>
+				<div id="daily-double" class="container col-md-12"></div>
+				<div class="well col-md-2" id="timer-div"><span id="timer"></span></div>
+			</div>
+		</div>
+
+		
 	</div>	
 	<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
 	<script type="text/javascript" src="./classes/timer.js"></script>
