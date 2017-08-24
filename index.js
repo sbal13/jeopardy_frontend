@@ -30,8 +30,12 @@ function promptUsername(){
 			<input type="text" id="username" placeholder="enter your name">
 			</form>
 	`
+
 	welcome.html(userForm)
+	$('#username').focus()
+
 	$('#user-form').on('submit', function(event){
+		$('#username').blur()
 		event.preventDefault()
 		const userName = $('#username').val()
 		currentUser = new User(userName)
@@ -100,7 +104,7 @@ function renderCategories(json){
 				<h2>${targetClue.category.title.toUpperCase()}</h2>
 				<br>
 				<br>
-				<form id="answer-form">
+				<form id="answer-form" autocomplete="off">
 					<p>What is 
 					<input type="text" id="answer" class="input-large">
 					 ?</p>
@@ -122,9 +126,12 @@ function renderCategories(json){
 				questionDisplay.css('background-image', ddImage)
 				inputDisplay.html(ddHTML)
 
+				$("#wager").focus()
+
 				$('#wager-form').on("submit", function(e){
 					e.preventDefault()
-
+					$("#wager").blur()
+					
 					const wagerValue = parseInt($('#wager').val())
 					
 					if(!wagerValue || wagerValue > maxWager() || wagerValue < 5) {
@@ -158,6 +165,8 @@ function guess(questionHTML, responseHTML, targetClue){
 		questionDisplay.html(questionHTML)
 		inputDisplay.html(responseHTML)
 
+		$('#answer').focus()
+
 		$('#answer-form').on("submit", function(e){
 			e.preventDefault()
 
@@ -182,6 +191,7 @@ function guess(questionHTML, responseHTML, targetClue){
 
 
 function backToGame(){
+	$("#answer").blur()
 	userDisplay.html(`${currentUser.name.toUpperCase()}: ${scoreNormalizer()}`)
 	clueDisplay.hide()
 	$('#daily-double').html("")
